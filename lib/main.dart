@@ -49,9 +49,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<Application>? apps;
-  
+
   @override
   void initState() {
     super.initState();
@@ -59,20 +58,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void runFutures() async {
-    apps = await DeviceApps.getInstalledApplications(
-      onlyAppsWithLaunchIntent: true,
-      includeSystemApps: true,
-      includeAppIcons: true
-    );
+    DeviceApps.getInstalledApplications(
+            onlyAppsWithLaunchIntent: true,
+            includeSystemApps: true,
+            includeAppIcons: true)
+        .then((value) => setState(() {
+              apps = value;
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       body: Center(
-        child: Column(
-          children: apps!.map((e) => Text(e.appName)).toList(),
-        ),
+        child: apps == null
+            ? const CircularProgressIndicator()
+            : SafeArea(
+                child: Column(
+                  children: apps!
+                      .map((e) => InkWell(
+                            onTap: () => e.openApp(),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(e.appName),
+                                Text(e.packageName),
+                                Text(e.category.name)
+                              ],
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ),
       ),
     );
   }
