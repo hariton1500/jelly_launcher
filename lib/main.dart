@@ -70,7 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
    return Scaffold(
       body: Center(
-        child: Column(),
+        child: Column(
+          children: apps!.map((e) => Text(e.appName)).toList(),
+        ),
       ),
     );
   }
